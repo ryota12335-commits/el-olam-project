@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grifo El Olam - Gestión de Ventas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- ESTILOS GENERALES Y PALETA CORPORATIVA --- */
+        :root {
+            --bg-main: #f0f4f8;
+            --navy-dark: #111e30;
+            --text-dark: #111e30;
+            --text-muted: #556375;
+            --card-bg: #ffffff;
+            --accent-blue: #008be2;
+            --accent-orange: #ff6a00;
+            --btn-gradient-start: #0091e6; 
+            --btn-gradient-end: #0a2942;
+            --border-color: #cbd5e1;
+            --success-color: #10b981;
+            --danger-color: #e11d48;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR ADMINISTRATIVO --- */
+        header {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            padding-bottom: 6px;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ffffff;
+        }
+
+        nav ul li a.active {
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .user-profile i {
+            color: var(--accent-blue);
+        }
+
+        /* --- LAYOUT DEL CONTROL --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            color: var(--accent-blue);
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* --- CONTENEDORES / TARJETAS --- */
+        .admin-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(225, 232, 237, 0.8);
+        }
+
+        .admin-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- CAMPOS DEL FORMULARIO --- */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--navy-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 139, 226, 0.1);
+        }
+
+        .form-control[readonly] {
+            background-color: #e2e8f0;
+            color: #475569;
+            cursor: not-allowed;
+        }
+
+        /* Feedback visual */
+        .info-feedback {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: block;
+            font-weight: 600;
+        }
+        .text-success { color: var(--success-color); }
+        .text-danger { color: var(--danger-color); }
+
+        /* Módulos dinámicos e Informativos */
+        .fidelization-box {
+            background-color: rgba(255, 106, 0, 0.05);
+            border: 1px dashed rgba(255, 106, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fidelization-box strong {
+            color: var(--accent-orange);
+            font-size: 1rem;
+        }
+
+        .stock-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            color: #166534;
+        }
+
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn-action:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            padding: 8px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 5px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover { background: #cbd5e1; }
+
+        /* --- TABLA DE HISTORIAL DE VENTAS --- */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .data-table th { background-color: #f1f5f9; color: var(--navy-dark); padding: 12px 16px; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        .data-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); }
+        .data-table tbody tr:hover { background-color: #f8fafc; }
+
+        .points-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: rgba(255, 106, 0, 0.1);
+            color: var(--accent-orange);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .text-small { font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 2px; }
+
+        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease; text-decoration: none; }
+        .btn-icon-edit { background-color: rgba(0, 139, 226, 0.1); color: var(--accent-blue); }
+        .btn-icon-edit:hover { background-color: var(--accent-blue); color: #ffffff; }
+        .btn-icon-delete { background-color: rgba(225, 29, 72, 0.1); color: #e11d48; }
+        .btn-icon-delete:hover { background-color: #e11d48; color: #ffffff; }
+
+        footer { background-color: var(--navy-dark); color: #94a3b8; padding: 20px 4%; font-size: 0.85rem; margin-top: auto; text-align: center; }
+        footer strong { color: white; }
+        .btn-logout { color: #f1f5f9; background-color: rgba(225, 29, 72, 0.2); border: 1px solid rgba(225, 29, 72, 0.4); padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .btn-logout:hover { background-color: #e11d48; color: #ffffff; border-color: #e11d48; transform: scale(1.05); }
+
+        @media (max-width: 992px) { .dashboard-layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/primax.png') }}" alt="Logo Primax" class="logo-img" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; border: 2px solid #008be2;">
+            <h1>Grifo El Olam</h1>
+        </div>
+        <nav>
+            <ul>
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('ventas') }}" class="active">Gestión Ventas</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor', 'Encargado de almacén', 'Cajero'] %}
+                <li><a href="{{ url_for('productos') }}">Gestión Productos</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('clientes') }}">Gestión Clientes</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor'] %}
+                <li><a href="{{ url_for('vista_usuarios') }}">Control Seguridad</a></li>
+                {% endif %}
+            </ul>
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <span>{{ colaborador }}</span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="Cerrar Sesión Segura" onclick="return confirm('¿Está seguro de que desea salir del sistema?')">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-title">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <h2>Punto de Registro de Ventas</h2>
+        </div>
+
+        <div class="dashboard-layout">
+            
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-receipt"></i>{{ 'Editar Transacción' if venta_edit else 'Nueva Transacción' }}</h3>
+                <form action="{{ url_for('procesar_venta') }}" method="POST" id="form_venta">
+                    <input type="hidden" id="id_venta" name="id_venta" value="{{ venta_edit.id_venta if venta_edit else '' }}">
+                    
+                    <div class="form-group">
+                        <label for="tipo_cliente">Tipo de Comprobante</label>
+                        <select id="tipo_cliente" name="tipo_cliente" class="form-control">
+                            <option value="GENERAL" {% if venta_edit and not venta_edit.dni_ruc %}selected{% endif %}>Cliente General (Público)</option>
+                            <option value="DNI" {% if venta_edit and venta_edit.dni_ruc|length == 8 %}selected{% endif %}>Boleta (DNI)</option>
+                            <option value="RUC" {% if venta_edit and venta_edit.dni_ruc|length == 11 %}selected{% endif %}>Factura (RUC)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="grupo_documento" style="display: none;">
+                        <label id="lbl_documento">Documento de Identidad</label>
+                        <input type="text" id="sale_client" name="dni_ruc" class="form-control" value="{{ venta_edit.dni_ruc if venta_edit else '' }}">
+                        <small id="client_info_display" class="info-feedback"></small>
+                        <div id="wrapper_registro_cliente" style="display: none;">
+                            <a href="{{ url_for('clientes') }}" class="btn-secondary"><i class="fa-solid fa-user-plus"></i> Registrar nuevo cliente</a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sale_product">Producto / Combustible</label>
+                        <select id="sale_product" name="id_producto" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+
+                    <div class="stock-box" id="stock_display" style="display: none;">
+                        <i class="fa-solid fa-boxes-stacked"></i> Stock actual: <strong id="val_stock">0</strong> <span id="unit_stock">Und</span>
+                    </div>
+
+                    <div class="form-group" id="grupo_tipo_medicion" style="display: none;">
+                        <label for="tipo_medicion">Modalidad de Venta</label>
+                        <select id="tipo_medicion" name="tipo_medicion" class="form-control">
+                            <option value="GALONES">Venta por Galones</option>
+                            <option value="MONTO">Venta por Monto (S/.)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label id="lbl_cantidad_monto">Cantidad / Unidades</label>
+                            <input type="number" step="any" id="input_operacion" name="valor_operacion" class="form-control" required min="0.001">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Unitario (S/.)</label>
+                            <input type="text" id="precio_unitario" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cantidad Final Despachada</label>
+                            <input type="text" id="sale_quantity" name="cantidad" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Total a Pagar (S/.)</label>
+                            <input type="text" id="sale_total" name="total" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="fidelization-box" id="fidelizacion_display">
+                        <span><i class="fa-solid fa-star"></i> Club El Olam:</span>
+                        <strong id="puntos_calculados">+0 pts</strong>
+                    </div>
+
+                    <small id="error_negocio" class="info-feedback text-danger" style="margin-top: 10px; font-size: 0.9rem; text-align: center; display: block;"></small>
+
+                    {% if venta_edit %}
+                    <a href="{{ url_for('ventas') }}" class="btn-action" style="background: #64748b; text-decoration:none; margin-top:10px;">
+                        <i class="fa-solid fa-xmark"></i> Cancelar Edición
+                    </a>
+                    {% endif %}
+
+                    <button type="submit" class="btn-action" id="btn_submit_venta">
+                        <i class="fa-solid fa-cash-register"></i> {{ 'Actualizar Venta' if venta_edit else 'Procesar y Registrar Venta' }}
+                    </button>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i>Ventas del Día e Impacto en Sistemas</h3>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Cód. Venta</th>
+                                <th>Cliente Asociado</th>
+                                <th>Detalle Producto</th>
+                                <th>Total</th>
+                                <th>Fidelización</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in lista_ventas %}
+                            <tr>
+                                <td><strong>V-{{ '%05d'|format(venta.id_venta) }}</strong></td>
+                                <td>
+                                    {% if venta.dni_ruc and venta.dni_ruc != '00000000' %}{{ venta.dni_ruc }}{% else %}<em>Público General</em>{% endif %}
+                                    <span class="text-small">
+                                        {% if venta.nombre_cliente %}{{ venta.nombre_cliente }}{% elif venta.dni_ruc and venta.dni_ruc != '00000000' %}No registrado{% else %}Público General{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ venta.nombre_producto if venta.nombre_producto else venta.id_producto }}
+                                    <span class="text-small">{{ '%.3f'|format(venta.cantidad) }} Gln/Und</span>
+                                </td>
+                                <td>S/. {{ '%.2f'|format(venta.total) }}</td>
+                                <td>
+                                    {% if venta.puntos and venta.puntos > 0 %}
+                                    <span class="points-pill"><i class="fa-solid fa-star"></i> +{{ venta.puntos }} pts</span>
+                                    {% else %}
+                                    <span class="text-small">Sin asignar</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display:flex; gap:8px;">
+                                        <a href="{{ url_for('editar_venta', id_venta=venta.id_venta) }}" class="btn-icon btn-icon-edit" title="Editar Venta">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <form action="{{ url_for('eliminar_venta', id_venta=venta.id_venta) }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar esta venta? Se revertirán el stock y los puntos asociados.');">
+                                            <button type="submit" class="btn-icon btn-icon-delete" title="Eliminar Venta">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" style="text-align:center; color: var(--text-muted); padding: 20px;">Aún no se han registrado ventas.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 <strong>Grifo El Olam S.A.C.</strong> • Panel de Operación Comercial Automatizado • Tarma, Perú</p>
+    </footer>
+
+    <script>
+        // Almacenes de memoria local para interacción en tiempo real
+        let baseProductos = {};
+        let clienteVerificado = false;
+
+        const productoEnEdicion = "{{ venta_edit.id_producto if venta_edit else '' }}";
+        const cantidadEnEdicion = "{{ venta_edit.cantidad if venta_edit else '' }}";
+
+        // Elementos del DOM reutilizados
+        const selectTipoCliente = document.getElementById('tipo_cliente');
+        const grupoDocumento = document.getElementById('grupo_documento');
+        const lblDocumento = document.getElementById('lbl_documento');
+        const inputClient = document.getElementById('sale_client');
+        const infoDisplay = document.getElementById('client_info_display');
+        const wrapperBtnRegistro = document.getElementById('wrapper_registro_cliente');
+        
+        const selectProduct = document.getElementById('sale_product');
+        const stockDisplay = document.getElementById('stock_display');
+        const valStock = document.getElementById('val_stock');
+        const unitStock = document.getElementById('unit_stock');
+        
+        const grupoTipoMedicion = document.getElementById('grupo_tipo_medicion');
+        const selectTipoMedicion = document.getElementById('tipo_medicion');
+        
+        const lblCantidadMonto = document.getElementById('lbl_cantidad_monto');
+        const inputOperacion = document.getElementById('input_operacion');
+        const inputPrecioUnitario = document.getElementById('precio_unitario');
+        
+        const inputCantidadFinal = document.getElementById('sale_quantity');
+        const inputTotalFinal = document.getElementById('sale_total');
+        const puntosCalculados = document.getElementById('puntos_calculados');
+        const errorNegocio = document.getElementById('error_negocio');
+        const btnSubmit = document.getElementById('btn_submit_venta');
+
+        // --- 1. CONTROL DEL TIPO DE COMPROBANTE ---
+        function evaluarTipoCliente() {
+            const tipo = selectTipoCliente.value;
+            infoDisplay.className = "info-feedback";
+            errorNegocio.textContent = "";
+            btnSubmit.disabled = false;
+
+            if (tipo === 'GENERAL') {
+                grupoDocumento.style.display = 'none';
+                inputClient.value = '00000000';
+                inputClient.removeAttribute('required');
+                infoDisplay.innerHTML = '<i class="fa-solid fa-users"></i> Despacho como Público General.';
+                infoDisplay.classList.add('text-success');
+                wrapperBtnRegistro.style.display = 'none';
+                clienteVerificado = true;
+                actualizarCalculos();
+            } else {
+                grupoDocumento.style.display = 'block';
+                inputClient.setAttribute('required', 'true');
+                wrapperBtnRegistro.style.display = 'none';
+                
+                if(tipo === 'DNI') {
+                    lblDocumento.textContent = "DNI del Cliente (8 dígitos)";
+                    inputClient.maxLength = 8;
+                    inputClient.placeholder = "Ingrese DNI de 8 dígitos";
+                    if(inputClient.value === '00000000' || inputClient.value.length !== 8) {
+                        inputClient.value = '';
+                        clienteVerificado = false;
+                        infoDisplay.innerHTML = '';
+                    } else {
+                        buscarCliente();
+                    }
+                } else if (tipo === 'RUC') {
+                    lblDocumento.textContent = "RUC de la Empresa (11 dígitos)";
+                    inputClient.maxLength = 11;
+                    inputClient.placeholder = "Ingrese RUC de 11 dígitos";
+                    if(inputClient.value === '00000000' || inputClient.value.length !== 11) {
+                        inputClient.value = '';
+                        clienteVerificado = false;
+                        infoDisplay.innerHTML = '';
+                    } else {
+                        buscarCliente();
+                    }
+                }
+            }
+        }
+
+        // Restricción nativa de teclado: Solo números
+        inputClient.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (selectTipoCliente.value === 'DNI' && this.value.length === 8) buscarCliente();
+            if (selectTipoCliente.value === 'RUC' && this.value.length === 11) buscarCliente();
+        });
+
+        // --- 2. BUSCADOR DE CLIENTES EN API ---
+        async function buscarCliente() {
+            const documento = inputClient.value.trim();
+            infoDisplay.className = "info-feedback";
+            
+            if (!documento) {
+                infoDisplay.innerHTML = '';
+                clienteVerificado = false;
+                return;
+            }
+
+            try {
+                const respuesta = await fetch(`/api/buscar_cliente/${documento}`);
+                const data = await respuesta.json();
+
+                if (data.encontrado) {
+                    infoDisplay.innerHTML = `<i class="fa-solid fa-user-check"></i> ${data.nombre}`;
+                    infoDisplay.classList.add('text-success');
+                    wrapperBtnRegistro.style.display = 'none';
+                    errorNegocio.textContent = "";
+                    clienteVerificado = true;
+                    btnSubmit.disabled = false;
+                } else {
+                    infoDisplay.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Cliente no registrado en el sistema.`;
+                    infoDisplay.classList.add('text-danger');
+                    wrapperBtnRegistro.style.display = 'block';
+                    errorNegocio.textContent = "⚠️ No se puede registrar la venta. El cliente no existe.";
+                    clienteVerificado = false;
+                    btnSubmit.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error al mapear clientes:', error);
+            }
+        }
+
+        // --- 3. CARGA DINÁMICA DE PRODUCTOS ---
+        async function cargarProductos() {
+            try {
+                const respuesta = await fetch('/api/productos');
+                const productos = await respuesta.json();
+                
+                selectProduct.innerHTML = '<option value="">Seleccione...</option>';
+
+                productos.forEach(p => {
+                    // Mapeamos los datos necesarios indexados por ID
+                    baseProductos[p.id_producto] = {
+                        nombre: p.nombre.toLowerCase(),
+                        precio: parseFloat(p.precio),
+                        stock: parseFloat(p.stock)
+                    };
+
+                    const opcion = document.createElement('option');
+                    opcion.value = p.id_producto;
+                    opcion.textContent = `${p.nombre} (S/. ${parseFloat(p.precio).toFixed(2)})`;
+                    selectProduct.appendChild(opcion);
+                });
+
+                if (productoEnEdicion) {
+                    selectProduct.value = productoEnEdicion;
+                    evaluarNaturalezaProducto();
+                    if(cantidadEnEdicion) {
+                        inputOperacion.value = cantidadEnEdicion;
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando catálogo:', error);
+            }
+        }
+
+        // --- 4. DISCRIMINAR COMBUSTIBLE VS ACCESORIOS/LUBRICANTES ---
+        function evaluarNaturalezaProducto() {
+            const id = selectProduct.value;
+            errorNegocio.textContent = "";
+            btnSubmit.disabled = !clienteVerificado;
+
+            if (!id) {
+                stockDisplay.style.display = 'none';
+                grupoTipoMedicion.style.display = 'none';
+                inputPrecioUnitario.value = '';
+                return;
+            }
+
+            const prod = baseProductos[id];
+            inputPrecioUnitario.value = prod.precio.toFixed(2);
+            
+            // Render de inventario
+            stockDisplay.style.display = 'block';
+            valStock.textContent = prod.stock;
+
+            // Identificar si es combustible por palabras clave comunes (regular, premium, diesel, gasolin)
+            const esCombustible = prod.nombre.includes('regular') || prod.nombre.includes('premium') || prod.nombre.includes('diesel') || prod.nombre.includes('glp');
+
+            if (esCombustible) {
+                grupoTipoMedicion.style.display = 'block';
+                unitStock.textContent = "Gln";
+                evaluarTipoMedicion();
+            } else {
+                grupoTipoMedicion.style.display = 'none';
+                selectTipoMedicion.value = "GALONES"; // Forzado a comportamiento lineal por unidad
+                unitStock.textContent = "Und";
+                lblCantidadMonto.textContent = "Cantidad de Unidades";
+                inputOperacion.placeholder = "Ej. 2";
+                actualizarCalculos();
+            }
+        }
+
+        function evaluarTipoMedicion() {
+            if (selectTipoMedicion.value === "GALONES") {
+                lblCantidadMonto.textContent = "Cantidad de Galones a despachar";
+                inputOperacion.placeholder = "Ej. 4.520";
+            } else {
+                lblCantidadMonto.textContent = "Monto de dinero a cargar (S/.)";
+                inputOperacion.placeholder = "Ej. 20.00";
+            }
+            actualizarCalculos();
+        }
+
+        // --- 5. MOTOR DE CÁLCULO EN TIEMPO REAL Y STOCK VALIDATION ---
+        function actualizarCalculos() {
+            const id = selectProduct.value;
+            const valorInput = parseFloat(inputOperacion.value) || 0;
+            errorNegocio.textContent = "";
+            
+            // Si el cliente no está verificado en DNI/RUC bloquear desde el vamos
+            if(!clienteVerificado) {
+                btnSubmit.disabled = true;
+                return;
+            } else {
+                btnSubmit.disabled = false;
+            }
+
+            if (!id || valorInput <= 0) {
+                inputCantidadFinal.value = '';
+                inputTotalFinal.value = '';
+                puntosCalculados.textContent = '+0 pts';
+                return;
+            }
+
+            const prod = baseProductos[id];
+            const precio = prod.precio;
+            let cantidadFinal = 0;
+            let totalFinal = 0;
+
+            if (grupoTipoMedicion.style.display === 'block' && selectTipoMedicion.value === "MONTO") {
+                // Cálculo por Monto
+                totalFinal = valorInput;
+                cantidadFinal = totalFinal / precio;
+            } else {
+                // Cálculo por Galones o Unidades tradicionales
+                cantidadFinal = valorInput;
+                totalFinal = cantidadFinal * precio;
+            }
+
+            // REGLA DE NEGOCIO: VALIDACIÓN DE STOCK
+            if (cantidadFinal > prod.stock) {
+                errorNegocio.textContent = `🚨 Stock insuficiente. Intenta vender una cantidad menor al inventario actual (${prod.stock} ${unitStock.textContent}).`;
+                btnSubmit.disabled = true;
+            } else {
+                btnSubmit.disabled = false;
+            }
+
+            // Mostrar resultados en los inputs espejo
+            inputCantidadFinal.value = cantidadFinal.toFixed(3);
+            inputTotalFinal.value = totalFinal.toFixed(2);
+
+            // REGLA DE NEGOCIO: FIDELIZACIÓN (Público general no acumula puntos)
+            if (selectTipoCliente.value === 'GENERAL') {
+                puntosCalculados.textContent = 'Sin asignar (Público General)';
+            } else {
+                // Fórmula base preexistente en tu código original
+                const puntos = Math.round((totalFinal / 20) * 0.2);
+                puntosCalculados.textContent = `+${puntos} pts`;
+            }
+        }
+
+        // --- 6. EVENTOS DE ESCUCHA ---
+        selectTipoCliente.addEventListener('change', evaluarTipoCliente);
+        inputClient.addEventListener('blur', buscarCliente);
+        selectProduct.addEventListener('change', evaluarNaturalezaProducto);
+        selectTipoMedicion.addEventListener('change', evaluarTipoMedicion);
+        
+        inputOperacion.addEventListener('input', actualizarCalculos);
+
+        // Disparo inicial
+        cargarProductos().then(() => {
+            evaluarTipoCliente();
+        });
+    </script>
+</body>
+</html>

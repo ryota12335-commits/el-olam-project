@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grifo El Olam - Presentación Institutional</title>
+    <!-- Fuentes limpias idénticas al diseño -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Iconos para las secciones informativas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- ESTILOS GENERALES (Paleta de colores de las fotos de origen) --- */
+        :root {
+            --bg-main: #f0f4f8;          /* Fondo general gris claro azulado */
+            --navy-dark: #111e30;        /* Azul oscuro del menú, banner y footer */
+            --text-dark: #111e30;       /* Texto principal */
+            --text-muted: #556375;      /* Texto secundario/cuerpo */
+            --card-bg: #ffffff;         /* Fondo blanco de tarjetas */
+            --accent-blue: #008be2;     /* Azul brillante para barras indicadoras */
+            --btn-gradient-start: #0091e6; /* Degradado del botón de login */
+            --btn-gradient-end: #0a2942;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- MENÚ DE NAVEGACIÓN (NAVBAR) --- */
+        header {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Simulación exacta del logo circular naranja y azul con la 'X' */
+        .logo-placeholder {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ff6a00, #ffb700);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 8px rgba(0, 139, 226, 0.5);
+        }
+
+        .logo-container h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            padding-bottom: 6px;
+        }
+
+        nav ul li a:hover {
+            color: #ffffff;
+        }
+
+        nav ul li a.active {
+            color: #ffffff;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        /* Botón Iniciar Sesión con el degradado de tu pantalla de login */
+        .btn-login {
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: #ffffff;
+            border: none;
+            padding: 10px 22px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-login:hover {
+            opacity: 0.9;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- BANNER PRINCIPAL --- */
+        .main-banner {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(17, 30, 48, 0.15);
+            margin-bottom: 40px;
+        }
+
+        .main-banner h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .main-banner p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* --- SECCIÓNES CON LÍNEA INDICADORA AZUL --- */
+        .section-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            margin-top: 15px;
+        }
+
+        .indicator-line {
+            width: 4px;
+            height: 28px;
+            background-color: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        .section-title-container h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* --- GRILLA DE IDENTIDAD ORGANIZACIONAL --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 45px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(225, 232, 237, 0.7);
+        }
+
+        .card-icon {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .card h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .card strong {
+            color: var(--text-dark);
+        }
+
+        /* --- CONTENEDOR INFRAESTRUCTURA E IMAGEN --- */
+        .info-block {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(225, 232, 237, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .info-block h4 {
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .info-block p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .info-block strong {
+            color: var(--text-dark);
+        }
+
+        /* Simulación de la Imagen del Establecimiento */
+        .establishment-image-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(rgba(17, 30, 48, 0.4), rgba(17, 30, 48, 0.2)), url('https://images.unsplash.com/photo-1527018601619-a508a2be00cd?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* --- PIE DE PÁGINA (FOOTER CLONADO) --- */
+        footer {
+            background-color: var(--navy-dark);
+            color: #94a3b8;
+            padding: 25px 4%;
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-left p {
+            margin-bottom: 5px;
+        }
+
+        .footer-left strong {
+            color: #ffffff;
+        }
+
+        .footer-right a {
+            color: #008be2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-right a:hover {
+            text-decoration: underline;
+        }
+
+        /* Ajustes Responsivos */
+        @media (max-width: 768px) {
+            header, .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            nav ul {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/primax.png') }}"  alt="Logo Primax" class="logo-img" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; border: 2px solid #008be2;">
+            <h1>Grifo El Olam</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active"></a></li>
+                <li><a href="#"></a></li>
+            </ul>
+            <!-- BOTÓN DE ACCESO AL SISTEMA -->
+            <a href="/login" class="btn-login">
+                <i class="fa-solid fa-right-to-bracket" style="margin-right: 8px;"></i>Iniciar Sesión
+            </a>
+        </nav>
+    </header>
+
+    <!-- CUERPO PRINCIPAL -->
+    <main>
+        
+        <!-- BANNER DE BIENVENIDA -->
+        <div class="main-banner">
+            <h2>Grifo El Olam S.A.C.</h2>
+            <p>Análisis del uso del Sistema Operativo en la gestión de ventas y control automatizado de combustible.</p>
+        </div>
+
+        <!-- SECCIÓN: IDENTIDAD ORGANIZACIONAL -->
+        <div class="section-title-container">
+            <div class="indicator-line"></div>
+            <h3>Identidad Organizacional</h3>
+        </div>
+
+        <div class="cards-grid">
+            <!-- TARJETA: MISIÓN -->
+            <div class="card">
+                <span class="card-icon">🚀</span>
+                <h4>Misión</h4>
+                <p>Brindar combustibles de calidad y un servicio eficiente a los clientes, garantizar un abastecimiento seguro y continuo para el transporte en la ciudad de Tarma.</p>
+            </div>
+
+            <!-- TARJETA: VISIÓN -->
+            <div class="card">
+                <span class="card-icon">👁️</span>
+                <h4>Visión</h4>
+                <p>Ser una estación de servicio líder en Tarma, reconocida por su calidad, confianza y excelente atención al cliente.</p>
+            </div>
+
+            <!-- TARJETA: SECTOR Y ACTIVIDAD -->
+            <div class="card">
+                <span class="card-icon">💼</span>
+                <h4>Sector y Actividad</h4>
+                <p>Perteneciente al sector de <strong>Comercio / Servicio</strong>. Orientado rigurosamente al uso de tecnologías informáticas para agilizar las transacciones diarias y optimizar el flujo de usuarios.</p>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: INFRAESTRUCTURA -->
+        <div class="section-title-container">
+            <div class="indicator-line"></div>
+            <h3>Infraestructura y Sistema Operativo</h3>
+        </div>
+
+        <div class="info-block">
+            <h4>Entorno Operacional Comercial</h4>
+            <p>La estación centraliza sus operaciones críticas de caja y facturación electrónica bajo la plataforma del sistema operativo <strong>Windows</strong>, lo que permite interactuar eficazmente con periféricos clave mediante una interfaz gráfica interactiva (GUI).</p>
+            <p><strong>Estructura y Arquitectura:</strong> Implementa una Arquitectura de tipo <strong>Híbrida</strong>, seleccionada estratégicamente por combinar un alto rendimiento de procesamiento con la estabilidad de software requerida para el negocio.</p>
+            
+            <!-- IMAGEN REPRESENTATIVA DEL ESTABLECIMIENTO -->
+            <div class="establishment-image-placeholder">
+                <span>Estación Central - Tarma, Perú</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <p>© 2026 <strong>Grifo El Olam Compañía Operadora de Servicios Múltiples S.A.C.</strong></p>
+                <p>📍 Estación de Servicio Líder en Tarma, Perú</p>
+            </div>
+            <div class="footer-right">
+                <p>Desarrollado por:</p>
+                <p><strong><a href="#">Tacuche Santiago, Piero</a></strong> • <strong><a href="#">Aribert Robles Bernardo</a></strong></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grifo El Olam - Gestión de Productos</title>
+    <!-- Fuentes limpias -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Iconos para el sistema administrativo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- ESTILOS GENERALES Y PALETA CORPORATIVA --- */
+        :root {
+            --bg-main: #f0f4f8;          /* Fondo general gris claro azulado */
+            --navy-dark: #111e30;        /* Azul oscuro del menú y paneles de control */
+            --text-dark: #111e30;       /* Texto principal */
+            --text-muted: #556375;      /* Texto secundario */
+            --card-bg: #ffffff;         /* Fondo blanco de contenedores */
+            --accent-blue: #008be2;     /* Azul brillante para botones principales */
+            --btn-gradient-start: #0091e6; /* Degradado de botones de acción */
+            --btn-gradient-end: #0a2942;
+            --border-color: #cbd5e1;
+            --danger-color: #e11d48;     /* Rojo para acciones de eliminar */
+            --warning-color: #f59e0b;    /* Ámbar para alertas de duplicados o modificaciones */
+            --success-color: #10b981;    /* Verde para validaciones correctas */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- MENÚ DE NAVEGACIÓN (NAVBAR ADMINISTRATIVO) --- */
+        header {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            padding-bottom: 6px;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ffffff;
+        }
+
+        nav ul li a.active {
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .user-profile i {
+            color: var(--accent-blue);
+        }
+
+        /* --- CONTENEDOR PRINCIPAL / LAYOUT DEL PANEL --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            color: var(--accent-blue);
+        }
+
+        /* Layout dividido: Formulario a la izquierda, Tabla a la derecha */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* --- TARJETAS / CONTENEDORES --- */
+        .admin-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(225, 232, 237, 0.8);
+        }
+
+        .admin-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--navy-dark);
+        }
+
+        /* --- FORMULARIOS --- */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--navy-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 139, 226, 0.1);
+        }
+
+        /* --- ALERTAS FLASH --- */
+        .alert-container {
+            grid-column: span 2;
+            margin-bottom: 15px;
+        }
+        .alert-box {
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #10b981; }
+        .alert-danger { background-color: #ffe4e6; color: #9f1239; border: 1px solid #e11d48; }
+
+        /* --- BOTONES DEL PANEL --- */
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: white;
+            border: none;
+            padding: 11px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        /* --- CONTROL DE CONSULTA / BUSCADOR --- */
+        .search-wrapper {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-container i {
+            position: absolute;
+            left: 15px;
+            color: var(--text-muted);
+        }
+
+        .search-input-container .form-control {
+            padding-left: 40px;
+        }
+
+        /* --- TABLA DE GESTIÓN (LISTADO) --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            background-color: #f1f5f9;
+            color: var(--navy-dark);
+            padding: 12px 16px;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-dark);
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Etiquetas de Categoría */
+        .badge-category {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .badge-combustibles { background-color: #e0f2fe; color: #0369a1; }
+        .badge-lubricantes { background-color: #fef3c7; color: #b45309; }
+        .badge-accesorios { background-color: #e2e8f0; color: #475569; }
+
+        /* Botones de Operación */
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-table {
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .btn-edit {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+        .btn-edit:hover {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: rgba(225, 29, 72, 0.1);
+            color: var(--danger-color);
+        }
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        footer {
+            background-color: var(--navy-dark);
+            color: #94a3b8;
+            padding: 20px 4%;
+            font-size: 0.85rem;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        footer strong { color: white; }
+
+        .btn-logout {
+            color: #f1f5f9;
+            background-color: rgba(225, 29, 72, 0.2);
+            border: 1px solid rgba(225, 29, 72, 0.4);
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background-color: #e11d48;
+            color: #ffffff;
+            border-color: #e11d48;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ DE NAVEGACIÓN ADMINISTRATIVO -->
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/primax.png') }}" alt="Logo Primax" class="logo-img" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; border: 2px solid #008be2;">
+            <h1>Grifo El Olam</h1>
+        </div>
+        <nav>
+            <ul>
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('ventas') }}">Gestión Ventas</a></li>
+                {% endif %}
+            
+                {% if session.rol in ['Administrador', 'Supervisor', 'Encargado de almacén', 'Cajero'] %}
+                <li><a href="{{ url_for('productos') }}" class="active">Gestión Productos</a></li>
+                {% endif %}
+            
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('clientes') }}">Gestión Clientes</a></li>
+                {% endif %}
+
+                {% if session.rol in ['Administrador', 'Supervisor'] %}
+                <li><a href="{{ url_for('vista_usuarios') }}">Control Seguridad</a></li>
+                {% endif %}
+            </ul>
+        
+            <div class="user-profile" style="display: flex; align-items: center; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <span>{{ colaborador }}</span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="Cerrar Sesión Segura" onclick="return confirm('¿Está seguro de que desea salir del sistema?')">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- PANEL PRINCIPAL DE TRABAJO -->
+    <main>
+        <div class="page-title">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <h2>Administración y Control de Productos</h2>
+        </div>
+
+        <div class="dashboard-layout">
+            
+            <!-- CONTENEDOR DE ALERTAS FLASH -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert-box alert-{{ 'success' if category == 'success' else 'danger' }}">
+                                <i class="fa-solid {{ 'fa-circle-check' if category == 'success' else 'fa-circle-exclamation' }}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- SECCIÓN: REGISTRAR / MODIFICAR PRODUCTOS -->
+            <div class="admin-card">
+                <h3>
+                    <i class="fa-solid {{ 'fa-pen-to-square' if producto_edit else 'fa-plus' }}" style="margin-right: 8px;"></i>
+                    {{ 'Modificar Producto' if producto_edit else 'Nuevo Producto' }}
+                </h3>
+                
+                <form action="{{ url_for('guardar_producto') }}" method="POST">
+                    
+                    <!-- ID del producto (Editable solo si es nuevo, readonly en edición) -->
+                    <div class="form-group">
+                        <label for="id_producto">Código de Producto (ID)</label>
+                        <input type="text" name="id_producto" id="id_producto" class="form-control" placeholder="Ej. L023" required 
+                               value="{{ producto_edit[0] if producto_edit else '' }}" {{ 'readonly style="background-color: #e2e8f0;"' if producto_edit else '' }}>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre / Descripción del Producto</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej. Gasolina Regular" required 
+                               value="{{ producto_edit[1] if producto_edit else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="marca">Marca</label>
+                        <input type="text" name="marca" id="marca" class="form-control" placeholder="Ej. Primax, Shell, Vistony" required 
+                               value="{{ producto_edit[2] if producto_edit else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="presentacion">Presentación</label>
+                        <input type="text" name="presentacion" id="presentacion" class="form-control" placeholder="Ej. Galón, 1 L, Sachet" required 
+                               value="{{ producto_edit[3] if producto_edit else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">Categoría del Producto</label>
+                        <select name="categoria" id="categoria" class="form-control" required>
+                            <option value="" disabled {{ 'selected' if not producto_edit else '' }}>Seleccione una categoría</option>
+                            <option value="combustibles" {{ 'selected' if producto_edit and producto_edit[4] == 'combustibles' else '' }}>Combustibles</option>
+                            <option value="lubricantes" {{ 'selected' if producto_edit and producto_edit[4] == 'lubricantes' else '' }}>Lubricantes</option>
+                            <option value="accesorios" {{ 'selected' if producto_edit and producto_edit[4] == 'accesorios' else '' }}>Accesorios</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio">Precio de Venta (S/.)</label>
+                        <input type="number" name="precio" id="precio" class="form-control" step="0.01" placeholder="0.00" required 
+                               value="{{ producto_edit[5] if producto_edit else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stock">Stock Disponible</label>
+                        <input type="number" name="stock" id="stock" class="form-control" placeholder="0" required 
+                               value="{{ producto_edit[6] if producto_edit else '' }}">
+                    </div>
+
+                    <!-- Input oculto para saber si estamos editando -->
+                    {% if producto_edit %}
+                        <input type="hidden" name="es_edicion" value="true">
+                    {% endif %}
+
+                    <button type="submit" class="btn-action">
+                        <i class="fa-solid fa-floppy-disk"></i> {{ 'Actualizar Producto' if producto_edit else 'Guardar Producto' }}
+                    </button>
+                    
+                    {% if producto_edit %}
+                        <a href="{{ url_for('productos') }}" class="btn-table btn-delete" style="width: 100%; margin-top: 10px; justify-content: center; padding: 10px;">Cancelar Edición</a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- SECCIÓN: CONSULTAR Y LISTADO DE PRODUCTOS -->
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-list-check" style="margin-right: 8px;"></i>Inventario Registrado</h3>
+                
+                <!-- Buscador funcional -->
+                <form action="{{ url_for('productos') }}" method="GET" class="search-wrapper">
+                    <div class="search-input-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="buscar" class="form-control" placeholder="Buscar por nombre o ID del producto..." value="{{ busqueda }}">
+                    </div>
+                    <button type="submit" class="btn-table btn-edit" style="background-color: var(--accent-blue); color: white; padding: 0 20px;">Buscar</button>
+                </form>
+
+                <!-- Tabla de Datos -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Producto</th>
+                                <th>Marca</th>
+                                <th>Presentación</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prod in lista_productos %}
+                            <tr>
+                                <td><strong>{{ prod[0] }}</strong></td>
+                                <td>{{ prod[1] }}</td>
+                                <td>{{ prod[2] }}</td>
+                                <td>{{ prod[3] }}</td>
+                                <td><span class="badge-category badge-{{ prod[4] }}">{{ prod[4] }}</span></td>
+                                <td>S/. {{ "%.2f"|format(prod[5]) }}</td>
+                                <td>{{ prod[6] }}</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="{{ url_for('editar_producto', id_producto=prod[0]) }}" class="btn-table btn-edit" title="Modificar"><i class="fa-solid fa-pen"></i></a>
+                                        <a href="{{ url_for('eliminar_producto', id_producto=prod[0]) }}" class="btn-table btn-delete" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar este producto?')"><i class="fa-solid fa-trash-can"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                    <i class="fa-solid fa-box-open" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                                    No se encontraron productos registrados.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© 2026 <strong>Grifo El Olam S.A.C.</strong> • Panel de Control Operativo Interno • Tarma, Perú</p>
+    </footer>
+
+</body>
+</html>

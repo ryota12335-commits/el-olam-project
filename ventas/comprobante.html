@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de Venta - Grifo El Olam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #f0f4f8;
+            --navy-dark: #111e30;
+            --text-dark: #111e30;
+            --text-muted: #556375;
+            --card-bg: #ffffff;
+            --accent-blue: #008be2;
+            --accent-orange: #ff6a00;
+            --btn-gradient-start: #0091e6;
+            --btn-gradient-end: #0a2942;
+            --border-color: #cbd5e1;
+            --success-color: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .action-bar {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-bar {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-bar:hover { opacity: 0.9; }
+
+        .btn-print {
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: #ffffff;
+        }
+
+        .btn-volver {
+            background-color: #e2e8f0;
+            color: var(--navy-dark);
+        }
+
+        /* --- TICKET / COMPROBANTE --- */
+        .ticket {
+            width: 100%;
+            max-width: 420px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            padding: 30px 25px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .ticket-header img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .ticket-header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        .ticket-header p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .divider {
+            border-top: 1px dashed var(--border-color);
+            margin: 16px 0;
+        }
+
+        .ticket-title {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--navy-dark);
+            margin-bottom: 10px;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .ticket-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .producto-detalle {
+            margin: 14px 0;
+        }
+
+        .producto-detalle .ticket-row {
+            font-size: 0.82rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-top: 10px;
+        }
+
+        .puntos-box {
+            background-color: rgba(255, 106, 0, 0.06);
+            border: 1px dashed rgba(255, 106, 0, 0.35);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .puntos-box p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .puntos-box strong {
+            color: var(--accent-orange);
+            font-size: 0.95rem;
+        }
+
+        .ticket-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .ticket-footer p { margin-bottom: 4px; }
+
+        /* --- IMPRESIÓN --- */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+            .action-bar {
+                display: none;
+            }
+            .ticket {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <button class="btn-bar btn-print" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> Imprimir Comprobante
+        </button>
+        <a href="{{ url_for('ventas') }}" class="btn-bar btn-volver">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Ventas
+        </a>
+    </div>
+
+    <div class="ticket" id="ticket-imprimible">
+        <div class="ticket-header">
+            <img src="{{ url_for('static', filename='img/primax.png') }}" alt="Logo Primax">
+            <h1>Grifo El Olam S.A.C.</h1>
+            <p>RUC: 20601234567</p>
+            <p>Carretera Central Km 128, Tarma, Perú</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="ticket-title">COMPROBANTE DE VENTA</div>
+
+        <div class="ticket-row">
+            <span>N° de Venta:</span>
+            <span>V-{{ '%05d'|format(venta.id_venta) }}</span>
+        </div>
+        <div class="ticket-row">
+            <span>Fecha / Hora:</span>
+            <span>{{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') if venta.fecha_venta else '-' }}</span>
+        </div>
+        <div class="ticket-row">
+            <span>Atendido por:</span>
+            <span>{{ colaborador }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="ticket-row">
+            <span>Cliente:</span>
+            <span>{{ venta.nombre_cliente if venta.nombre_cliente else 'Público General' }}</span>
+        </div>
+        <div class="ticket-row">
+            <span>DNI / RUC:</span>
+            <span>{{ venta.dni_ruc if venta.dni_ruc else 'No asociado' }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="producto-detalle">
+            <div class="ticket-row">
+                <span>Producto:</span>
+                <span>{{ venta.nombre_producto }}</span>
+            </div>
+            <div class="ticket-row">
+                <span>Cantidad:</span>
+                <span>{{ '%.2f'|format(venta.cantidad) }}</span>
+            </div>
+            <div class="ticket-row">
+                <span>Precio Unit.:</span>
+                <span>S/. {{ '%.2f'|format(venta.precio_unitario) if venta.precio_unitario is not none else '-' }}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="total-row">
+            <span>TOTAL</span>
+            <span>S/. {{ '%.2f'|format(venta.total) }}</span>
+        </div>
+
+        {% if venta.dni_ruc %}
+        <div class="puntos-box">
+            <p>Galones acumulados en esta compra</p>
+            <strong>+{{ '%.3f'|format(venta.puntos|default(0)) }} gln</strong>
+            
+            <p style="margin-top:6px; border-top: 1px dashed rgba(255, 106, 0, 0.2); padding-top: 6px;">
+                Saldo total acumulado:
+                <strong>{{ '%.3f'|format(venta.puntos_totales|default(0)) }} gln</strong>
+            </p>
+        </div>
+        {% else %}
+        <div class="puntos-box" style="background-color: #f1f5f9; border-color: #cbd5e1;">
+            <p style="color: #64748b;">Venta sin tarjeta de fidelización.</p>
+            <small style="color: #94a3b8; font-size: 0.7rem;">Asocie su DNI/RUC para acumular puntos.</small>
+        </div>
+        {% endif %}
+
+        <div class="ticket-footer">
+            <p>¡Gracias por su preferencia!</p>
+            <p>Conserve este comprobante como constancia de su compra.</p>
+        </div>
+    </div>
+
+</body>
+</html>

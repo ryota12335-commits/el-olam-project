@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grifo El Olam - Iniciar Sesión</title>
+    <!-- Fuentes limpias -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Iconos para los campos y botones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- PALETA DE COLORES CORPORATIVA --- */
+        :root {
+            --bg-main: #f0f4f8;          /* Fondo general gris claro azulado */
+            --navy-dark: #111e30;        /* Azul oscuro institucional */
+            --text-dark: #111e30;       /* Texto principal */
+            --text-muted: #556375;      /* Texto secundario / leyendas */
+            --card-bg: #ffffff;         /* Fondo blanco del contenedor */
+            --accent-blue: #008be2;     /* Azul brillante para bordes activos e indicadores */
+            --btn-gradient-start: #0091e6; /* Degradado exacto del botón */
+            --btn-gradient-end: #0a2942;
+            --border-color: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- ENCABEZADO SIMPLIFICADO PARA LOGIN --- */
+        header {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+
+        /* --- CENTRADO DEL CONTENEDOR DE LOGIN --- */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            padding: 40px 35px;
+            box-shadow: 0 10px 30px rgba(17, 30, 48, 0.08);
+            border: 1px solid rgba(225, 232, 237, 0.8);
+            text-align: center;
+        }
+
+        .login-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* --- CONTENEDORES DE ALERTAS FLUIDAS (FLASH) --- */
+        .alert-container {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .alert-flash {
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        /* Caja de error (Rojo suave corporativo) */
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+        }
+
+        /* Caja de información (Azul suave corporativo) */
+        .alert-info {
+            background-color: #e0f2fe;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+        }
+
+        /* --- ESTILOS DE LOS CAMPOS DE FORMULARIO --- */
+        .form-group {
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--navy-dark);
+            margin-bottom: 8px;
+        }
+
+        .input-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        .input-icon-wrapper input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-icon-wrapper input:focus {
+            border-color: var(--accent-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(0, 139, 226, 0.15);
+        }
+
+        .input-icon-wrapper input:focus + i {
+            color: var(--accent-blue);
+        }
+
+        /* --- BOTÓN DE INICIAR SESIÓN (CON EL DEGRADADO OFICIAL) --- */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: #ffffff;
+            border: none;
+            padding: 13px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+            box-shadow: 0 4px 12px rgba(10, 41, 66, 0.25);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.95;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        /* --- BLOQUE DE AVISO DE SEGURIDAD (REQUISITO EXCLUSIVO) --- */
+        .security-notice {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #e2e8f0;
+            display: flex;
+            gap: 12px;
+            text-align: left;
+            background-color: rgba(240, 244, 248, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .security-notice i {
+            color: #ff6a00;
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .security-notice p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* --- PIE DE PÁGINA --- */
+        footer {
+            background-color: var(--navy-dark);
+            color: #94a3b8;
+            padding: 20px 4%;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        footer strong {
+            color: #ffffff;
+        }
+
+        /* --- DISEÑO DEL BOTÓN VOLVER AL INICIO (ESTILO CÁPSULA DEGRADADO) --- */
+        .btn-back {
+            background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end));
+            color: #ffffff !important;   /* Texto blanco puro */
+            text-decoration: none;
+            padding: 10px 20px;          /* Espaciado interno para darle cuerpo de botón */
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;          /* Esquinas suavizadas idénticas al login */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(10, 41, 66, 0.3); /* Sombra para el efecto de relieve */
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        /* Efectos interactivos al pasar el cursor y hacer clic */
+        .btn-back:hover {
+            opacity: 0.92;               /* Se ilumina sutilmente al pasar el mouse */
+            color: #ffffff !important;
+        }
+
+        .btn-back:hover i {
+            color: #ffffff !important;   /* Mantiene la flecha blanca en el hover */
+        }
+
+        .btn-back:active {
+            transform: scale(0.98);      /* Efecto de hundimiento rápido al presionarlo */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ DE NAVEGACIÓN SIMPLIFICADO -->
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/primax.png') }}"  alt="Logo Primax" class="logo-img" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; border: 2px solid #008be2;">
+            <h1>Grifo El Olam</h1>
+        </div>
+        <a href="{{ url_for('portada_inicio') }}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+        </a>
+    </header>
+
+    <!-- FORMULARIO DE ACCESO -->
+    <main>
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Control de Combustible</h2>
+                <p>Ingresa tus credenciales autorizadas para acceder al sistema operativo comercial.</p>
+            </div>
+
+            <!-- INTEGRACIÓN CAPTURADORA DE ALERTAS FLASK (EN TIEMPO REAL) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert-flash {% if category in ['error', 'danger'] %}alert-error{% else %}alert-info{% endif %}">
+                                {% if category in ['error', 'danger'] %}
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-circle-info"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="/procesar-login" method="POST">
+                <!-- CAMPO: NOMBRE DE USUARIO -->
+                <div class="form-group">
+                    <label for="username">Nombre de Usuario</label>
+                    <div class="input-icon-wrapper">
+                        <input type="text" id="username" name="username" placeholder="ej. admin" required autocomplete="username">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <!-- CAMPO: CONTRASEÑA -->
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-icon-wrapper">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                </div>
+
+                <!-- BOTÓN INICIAR SESIÓN -->
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                </button>
+            </form>
+
+            <!-- AVISO DE SEGURIDAD PRIVADO -->
+            <div class="security-notice">
+                <i class="fa-solid fa-shield-halved"></i>
+                <p><strong>Aviso de Privacidad:</strong> Por motivos de seguridad, no existe un registro público de usuarios. Todas las cuentas de acceso son gestionadas y creadas únicamente por el Administrador del Sistema.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p>© 2026 <strong>Grifo El Olam S.A.C.</strong> • Estación Central - Tarma, Perú</p>
+    </footer>
+
+</body>
+</html>

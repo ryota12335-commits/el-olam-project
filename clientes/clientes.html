@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grifo El Olam - Gestión de Clientes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #f0f4f8;          
+            --navy-dark: #111e30;        
+            --text-dark: #111e30;       
+            --text-muted: #556375;      
+            --card-bg: #ffffff;         
+            --accent-blue: #008be2;     
+            --accent-orange: #ff6a00;   
+            --btn-gradient-start: #0091e6; 
+            --btn-gradient-end: #0a2942;
+            --border-color: #cbd5e1;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #e11d48;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: var(--navy-dark); color: #ffffff; padding: 15px 4%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-container h1 { font-size: 1.35rem; font-weight: 700; }
+        nav { display: flex; align-items: center; gap: 30px; }
+        nav ul { display: flex; list-style: none; gap: 24px; }
+        nav ul li a { color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 600; padding-bottom: 6px; }
+        nav ul li a:hover, nav ul li a.active { color: #ffffff; }
+        nav ul li a.active { border-bottom: 2px solid var(--accent-blue); }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #cbd5e1; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px; }
+        .user-profile i { color: var(--accent-blue); }
+        
+        main { flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .page-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
+        .page-title i { color: var(--accent-blue); }
+        .dashboard-layout { display: grid; grid-template-columns: 360px 1fr; gap: 30px; align-items: start; }
+        
+        .admin-card { background-color: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02); border: 1px solid rgba(225, 232, 237, 0.8); }
+        .admin-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; color: var(--navy-dark); display: flex; align-items: center; gap: 8px; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--navy-dark); }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); background-color: #f8fafc; border-radius: 6px; font-size: 0.9rem; outline: none; transition: all 0.2s; }
+        .form-control:focus { border-color: var(--accent-blue); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(0, 139, 226, 0.1); }
+        
+        .info-feedback { font-size: 0.8rem; margin-top: 4px; display: block; font-weight: 600; }
+        .text-success { color: var(--success-color); }
+        .text-danger { color: var(--danger-color); }
+
+        .btn-action { width: 100%; background: linear-gradient(to right, var(--btn-gradient-start), var(--btn-gradient-end)); color: white; border: none; padding: 11px; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 20px; transition: opacity 0.2s; }
+        .btn-action:hover { opacity: 0.9; }
+        .btn-action:disabled { background: #cbd5e1; cursor: not-allowed; color: #94a3b8; }
+
+        .search-wrapper { margin-bottom: 20px; }
+        .search-input-container { position: relative; display: flex; align-items: center; }
+        .search-input-container i { position: absolute; left: 15px; color: var(--text-muted); }
+        .search-input-container .form-control { padding-left: 40px; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .data-table th { background-color: #f1f5f9; color: var(--navy-dark); padding: 12px 16px; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        .data-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); }
+        .data-table tbody tr:hover { background-color: #f8fafc; }
+        
+        .points-badge { display: inline-flex; align-items: center; gap: 5px; background-color: rgba(255, 106, 0, 0.1); color: var(--accent-orange); padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+        .table-actions { display: flex; gap: 6px; }
+        .btn-table { border: none; padding: 6px 10px; font-size: 0.8rem; font-weight: 600; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
+        
+        .btn-edit { background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+        .btn-edit:hover { background-color: var(--warning-color); color: white; }
+        .btn-gift { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+        .btn-gift:hover { background-color: var(--success-color); color: white; }
+        
+        .alert { padding: 12px; margin-bottom: 20px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; list-style: none; }
+        .alert-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        
+        footer { background-color: var(--navy-dark); color: #94a3b8; padding: 20px 4%; font-size: 0.85rem; margin-top: auto; text-align: center; }
+        footer strong { color: white; }
+        .btn-logout { color: #f1f5f9; background-color: rgba(225, 29, 72, 0.2); border: 1px solid rgba(225, 29, 72, 0.4); padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; transition: all 0.2s; }
+        .btn-logout:hover { background-color: #e11d48; color: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/primax.png') }}" alt="Logo" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #008be2;">
+            <h1>Grifo El Olam</h1>
+        </div>
+        <nav>
+            <ul>
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('ventas') }}">Gestión Ventas</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor', 'Encargado de almacén', 'Cajero'] %}
+                <li><a href="{{ url_for('productos') }}">Gestión Productos</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor', 'Cajero'] %}
+                <li><a href="{{ url_for('clientes') }}" class="active">Gestión Clientes</a></li>
+                {% endif %}
+                {% if session.rol in ['Administrador', 'Supervisor'] %}
+                <li><a href="{{ url_for('vista_usuarios') }}">Control Seguridad</a></li>
+                {% endif %}
+            </ul>
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span style="margin-right: 10px;">{{ colaborador }}</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout" onclick="return confirm('¿Desea salir del sistema?')">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="page-title">
+            <i class="fa-solid fa-users-gear"></i>
+            <h2>Administración de Clientes y Fidelización</h2>
+        </div>
+
+        <div class="dashboard-layout">
+            
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-user-plus"></i>Ficha del Cliente</h3>
+                <form action="{{ url_for('guardar_cliente') }}" method="POST" id="form_cliente">
+                    
+                    <div class="form-group">
+                        <label for="dni_ruc">DNI o RUC</label>
+                        <input type="text" id="dni_ruc" name="dni_ruc" class="form-control" placeholder="8 dígitos (DNI) u 11 (RUC)" required maxlength="11">
+                        <small id="doc_feedback" class="info-feedback"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label id="lbl_nombre">Nombres y Apellidos / Razón Social</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej. Carlos Mendoza Torres" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono / Celular</label>
+                        <input type="text" id="telefono" name="telefono" class="form-control" placeholder="Ej. 954128763" maxlength="9">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" name="correo" class="form-control" placeholder="ejemplo@correo.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo_cliente">Tipo de Cliente</label>
+                        <select id="tipo_cliente" name="tipo_cliente" class="form-control">
+                            <option value="Particular Frecuente" selected>Particular Frecuente (DNI)</option>
+                            <option value="Empresa / Transporte">Empresa / Transporte (RUC)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-action" id="btn_guardar">
+                        <i class="fa-solid fa-user-check"></i> Guardar Datos Cliente
+                    </button>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3><i class="fa-solid fa-address-book"></i>Cartera de Clientes Registrados</h3>
+                
+                <div class="search-wrapper">
+                    <form action="{{ url_for('clientes') }}" method="GET" class="search-input-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="buscar" class="form-control" placeholder="Buscar por DNI, RUC o Nombre..." value="{{ busqueda }}">
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>DNI / RUC</th>
+                                <th>Cliente / Razón Social</th>
+                                <th>Contacto</th>
+                                <th>Puntos Club</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente in lista_clientes %}
+                            <tr>
+                                <td>
+                                    {% if cliente.dni_ruc|length == 11 %}
+                                    <span style="font-size:0.75rem; background:#cbd5e1; padding:2px 6px; border-radius:4px; font-weight:bold;">RUC</span>
+                                    {% else %}
+                                    <span style="font-size:0.75rem; background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:bold;">DNI</span>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ cliente.dni_ruc }}</strong></td>
+                                <td>{{ cliente.nombre }}</td>
+                                <td>{{ cliente.telefono or '---' }}</td>
+                                <td><span class="points-badge"><i class="fa-solid fa-star"></i> {{ "{:,}".format(cliente.puntos) }} pts</span></td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="{{ url_for('editar_cliente', dni_ruc=cliente.dni_ruc) }}" class="btn-table btn-edit" title="Editar">
+                                            <i class="fa-solid fa-user-pen"></i>
+                                        </a>
+                                        <button type="button" class="btn-table btn-gift" title="Gestionar Beneficios" onclick="abrirModal('{{ cliente.dni_ruc }}')">
+                                            <i class="fa-solid fa-gift"></i>
+                                        </button>
+                                        <a href="{{ url_for('eliminar_cliente', dni_ruc=cliente.dni_ruc) }}" 
+                                           class="btn-table btn-edit" style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626;" 
+                                           onclick="return confirm('¿Está seguro de eliminar a {{ cliente.nombre }}?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay clientes registrados en la base de datos o que coincidan con la búsqueda.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="modalPremios" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:30px; border-radius:10px; width:400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h3>Canjear Premio</h3>
+            <form action="{{ url_for('procesar_canje') }}" method="POST" style="margin-top:15px;">
+                <input type="hidden" name="dni" id="dni_canje">
+                <div class="form-group">
+                    <label>Seleccionar Producto</label>
+                    <select name="id_producto" id="selectProd" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" name="cantidad" value="1" min="1" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-action">Confirmar Canje</button>
+                <button type="button" class="btn-action" style="background:#64748b;" onclick="document.getElementById('modalPremios').style.display='none'">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(dni) {
+            document.getElementById('dni_canje').value = dni;
+            fetch('/api/productos').then(res => res.json()).then(data => {
+                let sel = document.getElementById('selectProd');
+                sel.innerHTML = data.map(p => `<option value="${p.id_producto}">${p.nombre} (${p.precio} pts)</option>`).join('');
+                document.getElementById('modalPremios').style.display = 'flex';
+            });
+        }
+
+        // --- VALIDACIONES DE NEGOCIO DINÁMICAS (DNI/RUC) ---
+        const inputDoc = document.getElementById('dni_ruc');
+        const selectTipo = document.getElementById('tipo_cliente');
+        const lblNombre = document.getElementById('lbl_nombre');
+        const docFeedback = document.getElementById('doc_feedback');
+        const btnGuardar = document.getElementById('btn_guardar');
+        const inputTelf = document.getElementById('telefono');
+
+        // Permitir solo números en documento y teléfono
+        inputDoc.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            validarDocumento();
+        });
+
+        inputTelf.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        selectTipo.addEventListener('change', function() {
+            if (this.value === 'Particular Frecuente') {
+                lblNombre.textContent = "Nombres y Apellidos";
+                inputDoc.placeholder = "Ej. 47586912";
+            } else {
+                lblNombre.textContent = "Razón Social de la Empresa";
+                inputDoc.placeholder = "Ej. 20601234567";
+            }
+            validarDocumento();
+        });
+
+        function validarDocumento() {
+            const valor = inputDoc.value;
+            docFeedback.className = "info-feedback";
+            
+            if (valor.length === 0) {
+                docFeedback.innerHTML = "";
+                btnGuardar.disabled = false;
+                return;
+            }
+
+            // Cambiar select automáticamente según la longitud detectada
+            if (valor.length === 8) {
+                selectTipo.value = "Particular Frecuente";
+                lblNombre.textContent = "Nombres y Apellidos";
+                docFeedback.innerHTML = "✓ Formato de DNI correcto.";
+                docFeedback.classList.add('text-success');
+                btnGuardar.disabled = false;
+            } else if (valor.length === 11) {
+                selectTipo.value = "Empresa / Transporte";
+                lblNombre.textContent = "Razón Social de la Empresa";
+                docFeedback.innerHTML = "✓ Formato de RUC correcto.";
+                docFeedback.classList.add('text-success');
+                btnGuardar.disabled = false;
+            } else {
+                docFeedback.innerHTML = "⚠️ El documento debe tener 8 dígitos (DNI) u 11 dígitos (RUC).";
+                docFeedback.classList.add('text-danger');
+                btnGuardar.disabled = true;
+            }
+        }
+    </script>
+
+    <footer>
+        <p>© 2026 <strong>Grifo El Olam S.A.C.</strong> • Panel de Control de Clientes Privado • Tarma, Perú</p>
+    </footer>
+</body>
+</html>
