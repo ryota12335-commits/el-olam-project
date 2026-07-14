@@ -450,14 +450,12 @@ def procesar_venta():
     # VALIDACIONES DEL DOCUMENTO
     # ==========================
 
-    if tipo_cliente == "GENERAL":
+    if tipo_cliente == "GENERAL" or not dni:
         dni = "00000000"
-
     elif tipo_cliente == "DNI":
         if len(dni) != 8:
             flash("El DNI debe tener exactamente 8 dígitos.", "danger")
             return redirect(url_for('ventas'))
-
     elif tipo_cliente == "RUC":
         if len(dni) != 11:
             flash("El RUC debe tener exactamente 11 dígitos.", "danger")
@@ -469,17 +467,14 @@ def procesar_venta():
         with conn.cursor(dictionary=True) as cursor:
 
             # ==========================
-            # VALIDAR CLIENTE
+            # VALIDAR CLIENTE (Solo si NO es general)
             # ==========================
-
             if dni != "00000000":
                 cursor.execute(
                     "SELECT puntos FROM clientes WHERE dni_ruc=%s",
                     (dni,)
                 )
-
                 cliente = cursor.fetchone()
-
                 if not cliente:
                     flash("El cliente no está registrado.", "danger")
                     return redirect(url_for('ventas'))
@@ -487,12 +482,10 @@ def procesar_venta():
             # ==========================
             # VALIDAR PRODUCTO
             # ==========================
-
             cursor.execute(
-                "SELECT precio, stock FROM articulos WHERE id_producto=%s",
+                "SELECT precio, stock, categoria FROM articulos WHERE id_producto=%s",
                 (id_producto,)
             )
-
             producto = cursor.fetchone()
 
             if not producto:
@@ -502,7 +495,6 @@ def procesar_venta():
             # ==========================
             # VALIDAR STOCK
             # ==========================
-
             if cantidad > float(producto["stock"]):
                 flash(
                     f"Stock insuficiente. Disponible: {producto['stock']}",
@@ -516,54 +508,43 @@ def procesar_venta():
             # ==========================
             # CALCULAR PUNTOS
             # ==========================
-
-            cursor.execute("""
-            SELECT categoria
-            FROM articulos
-            WHERE id_producto=%s
-            """,(id_producto,))
-
-            categoria = cursor.fetchone()["categoria"]
+            categoria = producto.get("categoria") or ""
 
             if dni == "00000000":
                 puntos = 0
             elif categoria.lower() == "combustibles":
-                puntos = round(cantidad,3)
+                puntos = round(cantidad, 3)
             else:
                 puntos = 0
 
             # =====================================================
             # EDITAR VENTA
             # =====================================================
-
             if id_venta:
-
                 cursor.execute("""
-                    SELECT dni_ruc,id_producto,cantidad,puntos
+                    SELECT dni_ruc, id_producto, cantidad, puntos
                     FROM ventas
                     WHERE id_venta=%s
                 """, (id_venta,))
-
                 anterior = cursor.fetchone()
 
                 if anterior:
-
+                    # Devolver stock anterior
                     cursor.execute("""
                         UPDATE articulos
                         SET stock=stock+%s
                         WHERE id_producto=%s
-                    """,
-                    (anterior["cantidad"], anterior["id_producto"]))
+                    """, (anterior["cantidad"], anterior["id_producto"]))
 
-                    if anterior["dni_ruc"] != "00000000":
-
+                    # Devolver puntos anteriores (Solo si el cliente anterior no era GENERAL)
+                    if anterior["dni_ruc"] != "00000000" and anterior["dni_ruc"] is not None:
                         cursor.execute("""
                             UPDATE clientes
-                            SET puntos=GREATEST(0,puntos-%s)
+                            SET puntos=GREATEST(0, puntos-%s)
                             WHERE dni_ruc=%s
-                        """,
-                        (anterior["puntos"], anterior["dni_ruc"]))
+                        """, (anterior["puntos"], anterior["dni_ruc"]))
 
+                # Guardamos la venta
                 cursor.execute("""
                     UPDATE ventas
                     SET dni_ruc=%s,
@@ -572,72 +553,52 @@ def procesar_venta():
                         total=%s,
                         puntos=%s
                     WHERE id_venta=%s
-                """,
-                (
-                    dni,
-                    id_producto,
-                    cantidad,
-                    total,
-                    puntos,
-                    id_venta
-                ))
+                """, (dni, id_producto, cantidad, total, puntos, id_venta))
 
+                # Descontar nuevo stock
                 cursor.execute("""
                     UPDATE articulos
                     SET stock=stock-%s
                     WHERE id_producto=%s
-                """,
-                (cantidad, id_producto))
+                """, (cantidad, id_producto))
 
+                # Asignar nuevos puntos (Solo si el cliente actual no es GENERAL)
                 if dni != "00000000":
-
                     cursor.execute("""
                         UPDATE clientes
                         SET puntos=puntos+%s
                         WHERE dni_ruc=%s
-                    """,
-                    (puntos, dni))
+                    """, (puntos, dni))
 
                 venta_id_final = id_venta
-
                 flash("Venta actualizada correctamente.", "success")
 
             # =====================================================
             # NUEVA VENTA
             # =====================================================
-
             else:
-
                 cursor.execute("""
                     INSERT INTO ventas
-                    (dni_ruc,id_producto,cantidad,total,puntos)
-                    VALUES(%s,%s,%s,%s,%s)
-                """,
-                (
-                    dni,
-                    id_producto,
-                    cantidad,
-                    total,
-                    puntos
-                ))
+                    (dni_ruc, id_producto, cantidad, total, puntos)
+                    VALUES(%s, %s, %s, %s, %s)
+                """, (dni, id_producto, cantidad, total, puntos))
 
                 venta_id_final = cursor.lastrowid
 
+                # Descontar stock
                 cursor.execute("""
                     UPDATE articulos
                     SET stock=stock-%s
                     WHERE id_producto=%s
-                """,
-                (cantidad, id_producto))
+                """, (cantidad, id_producto))
 
+                # Sumar puntos (Solo si no es cliente GENERAL)
                 if dni != "00000000":
-
                     cursor.execute("""
                         UPDATE clientes
                         SET puntos=puntos+%s
                         WHERE dni_ruc=%s
-                    """,
-                    (puntos, dni))
+                    """, (puntos, dni))
 
                 flash("Venta registrada correctamente.", "success")
 
